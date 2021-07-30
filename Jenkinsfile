@@ -22,6 +22,7 @@ pipeline {
     stage ('Deploy-To-Tomcat') {
             steps {
            sshagent(['tomcat']) {
+             sh 'whoami'
                 sh 'cp target/*.war /home/jenkins/apache-tomcat-8.5.69/webapps/webapp.war'
               }      
            }

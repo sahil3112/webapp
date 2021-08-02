@@ -13,7 +13,13 @@ pipeline {
             ''' 
       }
     }
-    
+    stage('Check-Git-Secret') {
+      steps {
+        sh 'rm git_secret_output || true'
+        sh 'docker run gesellix/trufflehog --json https://github.com/sahil3112/webapp.git > git_secret_output'
+        sh 'cat git_secret_output'
+      }
+    }
     stage('Build') {
       steps {
       sh 'mvn clean package'

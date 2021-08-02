@@ -13,7 +13,7 @@ pipeline {
             ''' 
       }
     }
-     stage ('Source Composition Analysis') {
+     stage ('SCA (OWASP-Dependency-Check)') {
       steps {
          sh 'rm owasp* || true'
          sh 'wget "https://raw.githubusercontent.com/cehkunal/webapp/master/owasp-dependency-check.sh" '
@@ -23,7 +23,7 @@ pipeline {
         
       }
     }
-    stage ('SAST') {
+    stage ('SAST (SonarQube)') {
       steps {
         withSonarQubeEnv('sonar') {
           sh 'mvn sonar:sonar'
@@ -31,7 +31,7 @@ pipeline {
         }
       }
     }
-    stage ('Check-Git-Secrets') {
+    stage ('Check-Git-Secrets (Git Secret trufflehog)') {
       steps {
         sh 'rm trufflehog || true'
         sh 'docker run gesellix/trufflehog --json https://github.com/cehkunal/webapp.git > trufflehog'
@@ -49,7 +49,7 @@ pipeline {
                 sh 'cp target/*.war /home/jenkins/apache-tomcat-8.5.69/webapps/webapp.war' 
         }
     }
-    stage ('DAST') {
+    stage ('DAST (OWASP ZAP)') {
       steps {
         sshagent(['zap']) {
          sh '"docker run -t owasp/zap2docker-stable zap-baseline.py -t http://10.0.2.15:8090/webapp/" || true'

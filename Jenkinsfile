@@ -49,5 +49,12 @@ pipeline {
                 sh 'cp target/*.war /home/jenkins/apache-tomcat-8.5.69/webapps/webapp.war' 
         }
     }
+    stage ('DAST') {
+      steps {
+        sshagent(['zap']) {
+         sh '"docker run -t owasp/zap2docker-stable zap-baseline.py -t http://10.0.2.15:8090/webapp/" || true'
+        }
+      }
+    }
   }
 }
